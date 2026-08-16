@@ -1,18 +1,34 @@
 <script>
 	import stripes from '$lib/images/bg-animations/b&w-stripes-animation.mp4?url';
+	import diagonal from '$lib/images/bg-animations/diagonal-stripes-animation.mp4?url';
 
 	let { data } = $props();
 
+	const VIDEOS = [stripes, diagonal];
+
 	let now = $state(new Date());
 	let blink = $state(true);
+	let videoIdx = $state(Math.floor(Math.random() * VIDEOS.length));
 
 	$effect(() => {
 		let id;
 		const tick = () => {
 			now = new Date();
 			blink = !blink;
+
+			const h = now.getHours();
+			if (h !== lastHour) {
+				lastHour = h;
+				let next;
+				do {
+					next = Math.floor(Math.random() * VIDEOS.length);
+				} while (next === videoIdx && VIDEOS.length > 1);
+				videoIdx = next;
+			}
+
 			id = setTimeout(tick, 1000 - now.getMilliseconds());
 		};
+		let lastHour = now.getHours();
 		id = setTimeout(tick, 1000 - now.getMilliseconds());
 		return () => clearTimeout(id);
 	});
@@ -86,7 +102,7 @@
 </svelte:head>
 
 <div class="dashboard">
-	<video class="bg" src={stripes} autoplay muted loop playsinline></video>
+	<video class="bg" src={VIDEOS[videoIdx]} autoplay muted loop playsinline></video>
 
 	<main>
 		<div class="clock">
