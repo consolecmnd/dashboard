@@ -32,4 +32,8 @@ No tests and no typecheck script exist. Verification = `npm run format` then `np
 
 ## Routes
 
-Much of `src/routes/` is default starter-template demo content (`sverdle/` game, `Counter.svelte`, `Header.svelte`, `about/`). `+page.js`/`about/+page.js` set `prerender = true`.
+- `src/routes/+page.svelte` is the dashboard (full-screen clock + weather). Its data comes from `+page.server.js`, which reads `WEATHERAPI_KEY`/`WEATHER_LOCATION` straight from `process.env` (avoids `$env/dynamic`'s build-time export requirement) and needs a real key at runtime.
+- Weather glyphs come from the DSEGWeather font (`1`=sun, `2`=cloud, `3`=rain, `4`=hard rain, `5`=snow, `6`/`7`/`8`=thunder, `9`=sun+cloud) mapped from WeatherAPI condition codes in `+page.svelte`.
+- `DSEG7`/`DSEGWeather` `@font-face` rules live in `layout.css`, using the `$lib` alias in `url()` (Vite resolves it). Don't put `@font-face` inside `<svelte:head><style>` — Svelte treats `<style>` content as raw text, so `{expr}` interpolation won't run.
+- Fonts (`.ttf`) and the background video (`.mp4`) live in `src/lib/` and are imported via `?url`.
+- The rest of `src/routes/` is default starter-template demo content (`sverdle/` game, `Counter.svelte`, `Header.svelte`, `about/`). `about/+page.js` sets `prerender = true`.
