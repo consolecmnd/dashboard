@@ -176,8 +176,8 @@
 		font-size: clamp(1rem, 8vw, 1.8rem);
 		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 		position: absolute;
-		top: 40px;
-		left: 40px;
+		top: 0;
+		left: 10px;
 		white-space: pre-line;
 		text-align: left;
 		line-height: 1.5;
@@ -188,25 +188,26 @@
 		right: 2rem;
 		bottom: 2rem;
 		display: flex;
-		align-items: center;
-		gap: 1rem;
-		padding: 0.75rem 1.25rem;
+		gap: 0;
+		padding: 1px 5px;
 		background: rgba(0, 0, 0, 0.55);
 		border-radius: 0.5rem;
 		backdrop-filter: blur(4px);
     align-items: center;
-    justify-content: center;
+		flex-direction: row;
 	}
 
 	.weather-icon {
 		font-family: 'DSEGWeather';
-    font-size: 10rem;
-    margin-bottom: -60px;
+    font-size: 7rem;
+    margin-bottom: -45px;
 	}
 
 	.weather-info {
 		display: flex;
 		flex-direction: column;
+		align-items: center;
+    gap: 5px;
 	}
 
 	.temp {
@@ -227,18 +228,19 @@
 	}
 
 	.aqi {
+		bottom: 10px;
+		left: 10px;
 		position: absolute;
-		left: 2rem;
-		bottom: 2rem;
 		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.3rem;
-		padding: 1rem 1.25rem;
+		flex-direction: row;
+		gap: 2px;
+		padding: 10px 2px;
 		background: rgba(0, 0, 0, 0.55);
 		border-radius: 0.5rem;
 		backdrop-filter: blur(4px);
-		max-width: 16rem;
+		max-width: 40vw;
+		width: 100%;
+		align-items: center;
 		text-align: center;
 	}
 
