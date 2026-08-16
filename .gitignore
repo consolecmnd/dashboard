@@ -3,4 +3,8 @@
 .now
 .next
 node_modules/
+.svelte-kit/
+build/
 out/
+.DS_Store
+.opencode/
