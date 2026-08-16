@@ -184,16 +184,16 @@
 	}
 
 	.colon.off {
-		opacity: 0;
+		opacity: 0.2;
 	}
 
 	.date {
 		font-family: 'DSEG7';
-		font-size: clamp(1rem, 8vw, 1.8rem);
+		font-size: clamp(1rem, 8vw, 1.5rem);
 		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 		position: absolute;
 		top: 0;
-		left: 10px;
+		left: 1em;
 		white-space: pre-line;
 		text-align: left;
 		line-height: 1.5;
@@ -201,8 +201,8 @@
 
 	.weather {
 		position: absolute;
-		right: 2rem;
-		bottom: 2rem;
+		right: 1rem;
+		bottom: 1rem;
 		display: flex;
 		gap: 0;
 		padding: 1px 5px;
@@ -244,17 +244,18 @@
 	}
 
 	.aqi {
-		bottom: 10px;
-		left: 10px;
+		bottom: 1em;
+		left: 1em;
 		position: absolute;
 		display: flex;
 		flex-direction: row;
-		gap: 2px;
+		gap: 5px;
 		padding: 10px 2px;
+		padding-right: 5px;
 		background: rgba(0, 0, 0, 0.55);
 		border-radius: 0.5rem;
 		backdrop-filter: blur(4px);
-		max-width: 40vw;
+		max-width: 33vw;
 		width: 100%;
 		align-items: center;
 		text-align: center;
@@ -274,19 +275,6 @@
 
 	.aqi-msg {
 		font-size: 0.75rem;
-		opacity: 0.8;
 		line-height: 1.3;
-	}
-
-	@media (max-width: 640px) {
-		.weather {
-			right: 1rem;
-			bottom: 1rem;
-		}
-
-		.aqi {
-			left: 1rem;
-			bottom: 1rem;
-		}
 	}
 </style>
