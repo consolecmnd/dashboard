@@ -4,11 +4,13 @@
 	let { data } = $props();
 
 	let now = $state(new Date());
+	let blink = $state(true);
 
 	$effect(() => {
 		let id;
 		const tick = () => {
 			now = new Date();
+			blink = !blink;
 			id = setTimeout(tick, 1000 - now.getMilliseconds());
 		};
 		id = setTimeout(tick, 1000 - now.getMilliseconds());
@@ -16,11 +18,12 @@
 	});
 
 	const pad = (n) => String(n).padStart(2, '0');
-	const timeStr = $derived(
-		`${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
-	);
+	const hours = $derived(pad(now.getHours()));
+	const minutes = $derived(pad(now.getMinutes()));
 	const dateStr = $derived(
-		now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })
+		now.toLocaleDateString(undefined, { weekday: 'short' }) +
+			'\n' +
+			now.toLocaleDateString(undefined, { month: 'long', day: 'numeric' })
 	);
 
 	// WeatherAPI condition code -> DSEGWeather glyph (1=sun, 2=cloud, 3=rain,
@@ -87,7 +90,9 @@
 
 	<main>
 		<div class="clock">
-			<span class="time">{timeStr}</span>
+			<div class="time">
+				{hours}<span class="colon" class:off={blink}>:</span>{minutes}
+			</div>
 			<span class="date">{dateStr}</span>
 		</div>
 
@@ -99,6 +104,14 @@
 					>
 					<span class="cond">{data.weather.text}</span>
 				</div>
+			</div>
+		{/if}
+
+		{#if data.aqi}
+			<div class="aqi">
+				<span class="aqi-value">{data.aqi.value}</span>
+				<span class="aqi-risk">{data.aqi.risk}</span>
+				<span class="aqi-msg">{data.aqi.message}</span>
 			</div>
 		{/if}
 	</main>
@@ -142,17 +155,32 @@
 
 	.time {
 		font-family: 'DSEG7';
-		font-size: min(15vw, 28vh);
+		font-size: min(28vw, 50vh);
 		line-height: 1;
 		letter-spacing: 0.03em;
 		color: #fff;
-		text-shadow: 0 0 24px rgba(255, 255, 255, 0.35);
+		text-shadow: 1px 1px 30px rgba(255, 255, 255, 0.65);
+		filter: drop-shadow(3px 3px 4px #000);
+	}
+
+	.colon {
+		transition: opacity 0.1s;
+	}
+
+	.colon.off {
+		opacity: 0;
 	}
 
 	.date {
-		margin-top: 0.5em;
-		font-size: clamp(1rem, 2.4vw, 2rem);
+		font-family: 'DSEG7';
+		font-size: clamp(1rem, 8vw, 1.8rem);
 		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+		position: absolute;
+		top: 40px;
+		left: 40px;
+		white-space: pre-line;
+		text-align: left;
+		line-height: 1.5;
 	}
 
 	.weather {
@@ -166,12 +194,14 @@
 		background: rgba(0, 0, 0, 0.55);
 		border-radius: 0.5rem;
 		backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
 	}
 
 	.weather-icon {
 		font-family: 'DSEGWeather';
-		font-size: 3rem;
-		line-height: 1;
+    font-size: 10rem;
+    margin-bottom: -60px;
 	}
 
 	.weather-info {
@@ -196,9 +226,48 @@
 		opacity: 0.85;
 	}
 
+	.aqi {
+		position: absolute;
+		left: 2rem;
+		bottom: 2rem;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.3rem;
+		padding: 1rem 1.25rem;
+		background: rgba(0, 0, 0, 0.55);
+		border-radius: 0.5rem;
+		backdrop-filter: blur(4px);
+		max-width: 16rem;
+		text-align: center;
+	}
+
+	.aqi-value {
+		font-family: 'DSEG7';
+		font-size: 3.5rem;
+		line-height: 1;
+	}
+
+	.aqi-risk {
+		font-size: 0.85rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.aqi-msg {
+		font-size: 0.75rem;
+		opacity: 0.8;
+		line-height: 1.3;
+	}
+
 	@media (max-width: 640px) {
 		.weather {
 			right: 1rem;
+			bottom: 1rem;
+		}
+
+		.aqi {
+			left: 1rem;
 			bottom: 1rem;
 		}
 	}
