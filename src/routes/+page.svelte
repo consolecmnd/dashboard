@@ -36,28 +36,28 @@
 		};
 	});
 
-	// $effect(() => {
-	// 	let id;
-	// 	const tick = () => {
-	// 		now = new Date();
-	// 		blink = !blink;
+	$effect(() => {
+		let id;
+		let lastHour = now.getHours();
+		const tick = () => {
+			now = new Date();
+			blink = !blink;
 
-	// 		const h = now.getHours();
-	// 		if (h !== lastHour) {
-	// 			lastHour = h;
-	// 			let next;
-	// 			do {
-	// 				next = Math.floor(Math.random() * VIDEOS.length);
-	// 			} while (next === videoIdx && VIDEOS.length > 1);
-	// 			videoIdx = next;
-	// 		}
+			const h = now.getHours();
+			if (h !== lastHour) {
+				lastHour = h;
+				let next;
+				do {
+					next = Math.floor(Math.random() * VIDEOS.length);
+				} while (next === videoIdx && VIDEOS.length > 1);
+				videoIdx = next;
+			}
 
-	// 		id = setTimeout(tick, 1000 - now.getMilliseconds());
-	// 	};
-	// 	let lastHour = now.getHours();
-	// 	id = setTimeout(tick, 1000 - now.getMilliseconds());
-	// 	return () => clearTimeout(id);
-	// });
+			id = setTimeout(tick, 1000 - now.getMilliseconds());
+		};
+		id = setTimeout(tick, 1000 - now.getMilliseconds());
+		return () => clearTimeout(id);
+	});
 
 	const pad = (n) => String(n).padStart(2, '0');
 	const hours = $derived(pad(now.getHours()));
@@ -212,8 +212,8 @@
 	}
 
 	.colon.off {
-		/* opacity: 0.2; */
-		opacity: 1;
+		opacity: 0.8;
+		/* opacity: 1; */
 	}
 
 	.date {
