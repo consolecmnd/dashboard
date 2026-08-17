@@ -40,18 +40,21 @@ async function fetchWeather() {
 
 	try {
 		const res = await fetch(
-			`https://api.weatherapi.com/v1/current.json?key=${encodeURIComponent(apiKey)}&q=${encodeURIComponent(q)}`
+			`https://api.weatherapi.com/v1/forecast.json?key=${encodeURIComponent(apiKey)}&q=${encodeURIComponent(q)}&days=1`
 		);
 
 		if (!res.ok) return null;
 
 		const data = await res.json();
 		const current = data.current;
+		const today = data.forecast.forecastday[0].day;
 
 		return {
 			temp_c: current.temp_c,
 			code: current.condition.code,
-			text: current.condition.text
+			text: current.condition.text,
+			max_c: today.maxtemp_c,
+			min_c: today.mintemp_c
 		};
 	} catch {
 		return null;

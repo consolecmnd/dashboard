@@ -10,28 +10,54 @@
 	let blink = $state(true);
 	let videoIdx = $state(Math.floor(Math.random() * VIDEOS.length));
 
+	let appVersion = $state('');
+
 	$effect(() => {
-		let id;
-		const tick = () => {
-			now = new Date();
-			blink = !blink;
+		let cancelled = false;
 
-			const h = now.getHours();
-			if (h !== lastHour) {
-				lastHour = h;
-				let next;
-				do {
-					next = Math.floor(Math.random() * VIDEOS.length);
-				} while (next === videoIdx && VIDEOS.length > 1);
-				videoIdx = next;
-			}
+		async function checkVersion() {
+			try {
+				const res = await fetch('/_app/version.json', { cache: 'no-store' });
+				if (!res.ok) return;
+				const { version } = await res.json();
+				if (!cancelled && appVersion && version !== appVersion) {
+					location.reload();
+				}
+				appVersion = version;
+			// eslint-disable-next-line no-empty
+			} catch {}
+		}
 
-			id = setTimeout(tick, 1000 - now.getMilliseconds());
+		checkVersion();
+		const id = setInterval(checkVersion, 60_000);
+		return () => {
+			cancelled = true;
+			clearInterval(id);
 		};
-		let lastHour = now.getHours();
-		id = setTimeout(tick, 1000 - now.getMilliseconds());
-		return () => clearTimeout(id);
 	});
+
+	// $effect(() => {
+	// 	let id;
+	// 	const tick = () => {
+	// 		now = new Date();
+	// 		blink = !blink;
+
+	// 		const h = now.getHours();
+	// 		if (h !== lastHour) {
+	// 			lastHour = h;
+	// 			let next;
+	// 			do {
+	// 				next = Math.floor(Math.random() * VIDEOS.length);
+	// 			} while (next === videoIdx && VIDEOS.length > 1);
+	// 			videoIdx = next;
+	// 		}
+
+	// 		id = setTimeout(tick, 1000 - now.getMilliseconds());
+	// 	};
+	// 	let lastHour = now.getHours();
+	// 	id = setTimeout(tick, 1000 - now.getMilliseconds());
+	// 	return () => clearTimeout(id);
+	// });
 
 	const pad = (n) => String(n).padStart(2, '0');
 	const hours = $derived(pad(now.getHours()));
@@ -116,8 +142,10 @@
 			<div class="weather">
 				<span class="weather-icon">{weatherGlyph}</span>
 				<div class="weather-info">
-					<span class="temp">{Math.round(data.weather.temp_c)}<span class="unit">&deg;C</span></span
-					>
+					<div class="temp-group">
+						<span class="temp">{Math.round(data.weather.temp_c)}<span class="unit">&deg;C</span></span>
+						<span class="hi-lo">H:{Math.round(data.weather.max_c)}&deg; L:{Math.round(data.weather.min_c)}&deg;</span>
+					</div>
 					<span class="cond">{data.weather.text}</span>
 				</div>
 			</div>
@@ -180,11 +208,12 @@
 	}
 
 	.colon {
-		transition: opacity 0.1s;
+		/* transition: opacity 0.1s; */
 	}
 
 	.colon.off {
-		opacity: 0.2;
+		/* opacity: 0.2; */
+		opacity: 1;
 	}
 
 	.date {
@@ -193,7 +222,7 @@
 		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 		position: absolute;
 		top: 0;
-		left: 1em;
+		left: 10px;
 		white-space: pre-line;
 		text-align: left;
 		line-height: 1.5;
@@ -211,12 +240,15 @@
 		backdrop-filter: blur(4px);
     align-items: center;
 		flex-direction: row;
+		height: 80px;
+    width: 36vw;
+    justify-content: center;
 	}
 
 	.weather-icon {
 		font-family: 'DSEGWeather';
-    font-size: 7rem;
-    margin-bottom: -45px;
+		gap: 5px;
+		font-size: clamp(1rem, 14vw, 5rem);
 	}
 
 	.weather-info {
@@ -232,8 +264,15 @@
 		line-height: 1;
 	}
 
+	.temp-group {
+		display: flex;
+    align-content: center;
+    height: 40px;
+    align-items: center;
+	}
+
 	.unit {
-		font-family: var(--font-body);
+		font-family: 'DSEG7';
 		font-size: 1rem;
 		margin-left: 0.15em;
 	}
@@ -241,6 +280,14 @@
 	.cond {
 		font-size: 0.9rem;
 		opacity: 0.85;
+		text-align: center;
+	}
+
+	.hi-lo {
+		font-family: 'DSEG7';
+		font-size: 0.85rem;
+		text-align: center;
+    line-height: 1.5;
 	}
 
 	.aqi {
@@ -250,7 +297,7 @@
 		display: flex;
 		flex-direction: row;
 		gap: 5px;
-		padding: 10px 2px;
+		padding: 0 2px;
 		padding-right: 5px;
 		background: rgba(0, 0, 0, 0.55);
 		border-radius: 0.5rem;
@@ -259,6 +306,7 @@
 		width: 100%;
 		align-items: center;
 		text-align: center;
+		height: 80px;
 	}
 
 	.aqi-value {
