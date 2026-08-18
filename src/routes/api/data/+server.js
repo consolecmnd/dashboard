@@ -1,4 +1,5 @@
-import 'dotenv/config';
+import { json } from '@sveltejs/kit';
+import { WEATHERAPI_KEY, WEATHER_LOCATION, AQHI_STATION } from '$env/static/private';
 
 const AQHI_MESSAGES = [
 	{ max: 3, risk: 'Low Risk', msg: 'Ideal air quality for outdoor activities.' },
@@ -30,17 +31,21 @@ function getAqhiInfo(value) {
 	return { value: rounded, risk: last.risk, message: last.msg };
 }
 
+export const prerender = false;
+
+export async function GET() {
+	const [weather, aqi] = await Promise.all([fetchWeather(), fetchAqhi()]);
+	return json({ weather, aqi });
+}
+
 async function fetchWeather() {
-	const apiKey = process.env.WEATHERAPI_KEY;
-	const location = process.env.WEATHER_LOCATION;
+	if (!WEATHERAPI_KEY) return null;
 
-	if (!apiKey) return null;
-
-	const q = location || 'auto:ip';
+	const q = WEATHER_LOCATION || 'auto:ip';
 
 	try {
 		const res = await fetch(
-			`https://api.weatherapi.com/v1/forecast.json?key=${encodeURIComponent(apiKey)}&q=${encodeURIComponent(q)}&days=1`
+			`https://api.weatherapi.com/v1/forecast.json?key=${encodeURIComponent(WEATHERAPI_KEY)}&q=${encodeURIComponent(q)}&days=1`
 		);
 
 		if (!res.ok) return null;
@@ -69,7 +74,7 @@ async function fetchWeather() {
 }
 
 async function fetchAqhi() {
-	const station = process.env.AQHI_STATION || 'IAKID';
+	const station = AQHI_STATION || 'IAKID';
 	const url = `https://dd.weather.gc.ca/today/air_quality/aqhi/pnr/observation/realtime/xml/AQ_OBS_${station}_CURRENT.xml`;
 
 	try {
@@ -86,10 +91,4 @@ async function fetchAqhi() {
 	} catch {
 		return null;
 	}
-}
-
-export async function load() {
-	const [weather, aqi] = await Promise.all([fetchWeather(), fetchAqhi()]);
-
-	return { weather, aqi };
 }

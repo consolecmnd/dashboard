@@ -2,7 +2,10 @@
 	import stripes from '$lib/images/bg-animations/b&w-stripes-animation.mp4?url';
 	import diagonal from '$lib/images/bg-animations/diagonal-stripes-animation.mp4?url';
 
-	let { data } = $props();
+	let { data: initialData } = $props();
+
+	let data = $state(initialData);
+	let lastUpdated = $state(new Date());
 
 	const VIDEOS = [stripes, diagonal];
 
@@ -11,6 +14,36 @@
 	let videoIdx = $state(Math.floor(Math.random() * VIDEOS.length));
 
 	let appVersion = $state('');
+	let showForecast = $state(false);
+	let cycleStart = Date.now();
+
+	function toggleForecast() {
+		showForecast = !showForecast;
+		cycleStart = Date.now();
+	}
+
+	$effect(() => {
+		let cancelled = false;
+
+		function tick() {
+			if (cancelled) return;
+			const elapsed = Date.now() - cycleStart;
+			if (!showForecast && elapsed >= 720_000) {
+				showForecast = true;
+				cycleStart = Date.now();
+			} else if (showForecast && elapsed >= 180_000) {
+				showForecast = false;
+				cycleStart = Date.now();
+			}
+			id = setTimeout(tick, 1000);
+		}
+
+		let id = setTimeout(tick, 1000);
+		return () => {
+			cancelled = true;
+			clearTimeout(id);
+		};
+	});
 
 	$effect(() => {
 		let cancelled = false;
@@ -29,7 +62,30 @@
 		}
 
 		checkVersion();
-		const id = setInterval(checkVersion, 60_000);
+		const id = setInterval(checkVersion, 300_000);
+		return () => {
+			cancelled = true;
+			clearInterval(id);
+		};
+	});
+
+	$effect(() => {
+		let cancelled = false;
+
+		async function refresh() {
+			try {
+				const res = await fetch('/api/data', { cache: 'no-store' });
+				if (!res.ok) return;
+				const updated = await res.json();
+				if (!cancelled) {
+					data = updated;
+					lastUpdated = new Date();
+				}
+			// eslint-disable-next-line no-empty
+			} catch {}
+		}
+
+		const id = setInterval(refresh, 600_000);
 		return () => {
 			cancelled = true;
 			clearInterval(id);
@@ -121,6 +177,12 @@
 	};
 
 	const weatherGlyph = $derived(data.weather ? (GLYPHS[data.weather.code] ?? '2') : '');
+
+	const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+	function forecastGlyph(code) {
+		return GLYPHS[code] ?? '2';
+	}
 </script>
 
 <svelte:head>
@@ -130,25 +192,42 @@
 <div class="dashboard">
 	<video class="bg" src={VIDEOS[videoIdx]} autoplay muted loop playsinline></video>
 
-	<main>
-		<div class="clock">
-			<div class="time">
-				{hours}<span class="colon" class:off={blink}>:</span>{minutes}
-			</div>
-			<span class="date">{dateStr}</span>
-		</div>
-
-		{#if data.weather}
-			<div class="weather">
-				<span class="weather-icon">{weatherGlyph}</span>
-				<div class="weather-info">
-					<div class="temp-group">
-						<span class="temp">{Math.round(data.weather.temp_c)}<span class="unit">&deg;C</span></span>
-						<span class="hi-lo">H:{Math.round(data.weather.max_c)}&deg; L:{Math.round(data.weather.min_c)}&deg;</span>
+	<main ondblclick={toggleForecast}>
+		{#if showForecast && data.weather?.forecast}
+			<div class="forecast">
+			{#each data.weather.forecast as day, i (day.date)}
+				<div class="forecast-day">
+					<span class="forecast-label">{i === 0 ? 'Today' : DAY_NAMES[new Date(day.date + 'T12:00:00').getDay()]}</span>
+						<span class="forecast-icon">{forecastGlyph(day.code)}</span>
+						<span class="forecast-hi">{Math.round(day.max_c)}&deg;</span>
+						<span class="forecast-lo">{Math.round(day.min_c)}&deg;</span>
 					</div>
-					<span class="cond">{data.weather.text}</span>
-				</div>
+				{/each}
 			</div>
+
+			<div class="clock-mini">
+				<span class="time-mini">{hours}<span class="colon" class:off={blink}>:</span>{minutes}</span>
+			</div>
+		{:else}
+			<div class="clock">
+				<div class="time">
+					{hours}<span class="colon" class:off={blink}>:</span>{minutes}
+				</div>
+				<span class="date">{dateStr}</span>
+			</div>
+
+			{#if data.weather}
+				<div class="weather">
+					<span class="weather-icon">{weatherGlyph}</span>
+					<div class="weather-info">
+						<div class="temp-group">
+							<span class="temp">{Math.round(data.weather.temp_c)}<span class="unit">&deg;C</span></span>
+							<span class="hi-lo">H:{Math.round(data.weather.max_c)}&deg; L:{Math.round(data.weather.min_c)}&deg;</span>
+						</div>
+						<span class="cond">{data.weather.text}</span>
+					</div>
+				</div>
+			{/if}
 		{/if}
 
 		{#if data.aqi}
@@ -156,6 +235,12 @@
 				<span class="aqi-value">{data.aqi.value}</span>
 				<span class="aqi-risk">{data.aqi.risk}</span>
 				<span class="aqi-msg">{data.aqi.message}</span>
+			</div>
+		{/if}
+
+		{#if lastUpdated}
+			<div class="status">
+				Updated {lastUpdated.toLocaleTimeString()} &middot; every 10 min
 			</div>
 		{/if}
 	</main>
@@ -177,6 +262,7 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+		pointer-events: none;
 	}
 
 	main {
@@ -324,5 +410,71 @@
 	.aqi-msg {
 		font-size: 0.75rem;
 		line-height: 1.3;
+	}
+
+	.forecast {
+		display: flex;
+		gap: 1.5rem;
+		justify-content: center;
+		align-items: center;
+		padding: 1rem;
+		background: rgba(0, 0, 0, 0.55);
+		border-radius: 0.75rem;
+		backdrop-filter: blur(4px);
+	}
+
+	.forecast-day {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.4rem;
+		min-width: 4rem;
+	}
+
+	.forecast-label {
+		font-size: 0.8rem;
+		opacity: 0.8;
+		text-transform: uppercase;
+	}
+
+	.forecast-icon {
+		font-family: 'DSEGWeather';
+		font-size: clamp(1.5rem, 4vw, 3rem);
+	}
+
+	.forecast-hi {
+		font-family: 'DSEG7';
+		font-size: clamp(0.9rem, 2vw, 1.4rem);
+	}
+
+	.forecast-lo {
+		font-family: 'DSEG7';
+		font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+		opacity: 0.5;
+	}
+
+	.clock-mini {
+		position: absolute;
+		right: 2rem;
+		bottom: 2rem;
+		padding: 0.5rem 1rem;
+		background: rgba(0, 0, 0, 0.55);
+		border-radius: 0.5rem;
+		backdrop-filter: blur(4px);
+	}
+
+	.time-mini {
+		font-family: 'DSEG7';
+		font-size: clamp(1.2rem, 4vw, 2.5rem);
+		line-height: 1;
+	}
+
+	.status {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		font-size: 0.7rem;
+		opacity: 0.5;
+		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 	}
 </style>
