@@ -209,10 +209,11 @@
 				<span class="time-mini">{hours}<span class="colon" class:off={blink}>:</span>{minutes}</span>
 			</div>
 		{:else}
-			<div class="clock">
-				<div class="time">
-					{hours}<span class="colon" class:off={blink}>:</span>{minutes}
-				</div>
+		<div class="clock">
+			<div class="time">
+				<span class="time-ghost">00:00</span>
+				{hours}<span class="colon" class:off={blink}>:</span>{minutes}
+			</div>
 				<span class="date">{dateStr}</span>
 			</div>
 
@@ -240,7 +241,7 @@
 
 		{#if lastUpdated}
 			<div class="status">
-				Updated {lastUpdated.toLocaleTimeString()} &middot; every 10 min
+				Updated every 10<br />{lastUpdated.toLocaleTimeString()}
 			</div>
 		{/if}
 	</main>
@@ -281,9 +282,11 @@
 		flex-direction: column;
 		align-items: center;
 		text-align: center;
+		margin-top: -40px;
 	}
 
 	.time {
+		position: relative;
 		font-family: 'DSEG7';
 		font-size: min(28vw, 50vh);
 		line-height: 1;
@@ -291,6 +294,15 @@
 		color: #fff;
 		text-shadow: 1px 1px 30px rgba(255, 255, 255, 0.65);
 		filter: drop-shadow(3px 3px 4px #000);
+	}
+
+	.time-ghost {
+		position: absolute;
+		inset: 0;
+		opacity: 0.15;
+		pointer-events: none;
+		color: #000;
+		z-index: -1;
 	}
 
 	.colon {
@@ -307,7 +319,7 @@
 		font-size: clamp(1rem, 8vw, 1.5rem);
 		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 		position: absolute;
-		top: 0;
+		top: 10px;
 		left: 10px;
 		white-space: pre-line;
 		text-align: left;
@@ -326,8 +338,8 @@
 		backdrop-filter: blur(4px);
     align-items: center;
 		flex-direction: row;
-		height: 80px;
-    width: 36vw;
+		height: 100px;
+    width: 40vw;
     justify-content: center;
 	}
 
@@ -341,7 +353,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-    gap: 5px;
+		gap: 15px;
 	}
 
 	.temp {
@@ -388,11 +400,11 @@
 		background: rgba(0, 0, 0, 0.55);
 		border-radius: 0.5rem;
 		backdrop-filter: blur(4px);
-		max-width: 33vw;
+		max-width: 50vw;
 		width: 100%;
 		align-items: center;
 		text-align: center;
-		height: 80px;
+		height: 100px;
 	}
 
 	.aqi-value {
@@ -470,11 +482,14 @@
 	}
 
 	.status {
+		font-family: 'DSEG7';
 		position: absolute;
 		top: 1rem;
 		right: 1rem;
 		font-size: 0.7rem;
-		opacity: 0.5;
+		opacity: 0.8;
 		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+		line-height: 1.8;
+		text-align: center;
 	}
 </style>
