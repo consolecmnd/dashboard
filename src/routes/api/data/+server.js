@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { WEATHERAPI_KEY, WEATHER_LOCATION, AQHI_STATION } from '$env/static/private';
+import 'dotenv/config';
 
 const AQHI_MESSAGES = [
 	{ max: 3, risk: 'Low Risk', msg: 'Ideal air quality for outdoor activities.' },
@@ -39,13 +39,16 @@ export async function GET() {
 }
 
 async function fetchWeather() {
-	if (!WEATHERAPI_KEY) return null;
+	const apiKey = process.env.WEATHERAPI_KEY;
+	const location = process.env.WEATHER_LOCATION;
 
-	const q = WEATHER_LOCATION || 'auto:ip';
+	if (!apiKey) return null;
+
+	const q = location || 'auto:ip';
 
 	try {
 		const res = await fetch(
-			`https://api.weatherapi.com/v1/forecast.json?key=${encodeURIComponent(WEATHERAPI_KEY)}&q=${encodeURIComponent(q)}&days=1`
+			`https://api.weatherapi.com/v1/forecast.json?key=${encodeURIComponent(apiKey)}&q=${encodeURIComponent(q)}&days=7`
 		);
 
 		if (!res.ok) return null;
@@ -74,7 +77,7 @@ async function fetchWeather() {
 }
 
 async function fetchAqhi() {
-	const station = AQHI_STATION || 'IAKID';
+	const station = process.env.AQHI_STATION || 'IAKID';
 	const url = `https://dd.weather.gc.ca/today/air_quality/aqhi/pnr/observation/realtime/xml/AQ_OBS_${station}_CURRENT.xml`;
 
 	try {
