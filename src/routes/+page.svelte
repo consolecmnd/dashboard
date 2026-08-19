@@ -1,13 +1,14 @@
 <script>
 	import stripes from '$lib/images/bg-animations/b&w-stripes-animation.mp4?url';
 	import diagonal from '$lib/images/bg-animations/diagonal-stripes-animation.mp4?url';
+	import redGrad from '$lib/images/bg-animations/red-grad-animation.mp4?url';
 
 	let { data: initialData } = $props();
 
 	let data = $state(initialData);
 	let lastUpdated = $state(new Date());
 
-	const VIDEOS = [stripes, diagonal];
+	const VIDEOS = [stripes, diagonal, redGrad];
 
 	let now = $state(new Date());
 	let blink = $state(true);
@@ -204,6 +205,11 @@
 				{/each}
 			</div>
 
+			<span class="dateWrapper">
+				<span class="day seven-seg">{dayStr}</span>
+				<span class="date">{dateStr}</span>
+			</span>
+
 			<div class="clock-mini" onclick={toggleForecast} role="button" tabindex="-1">
 				<span class="time-mini">{hours}<span class="colon" class:off={blink}>:</span>{minutes}</span>
 			</div>
@@ -329,7 +335,7 @@
 	.dateWrapper {
 		position: absolute;
 		top: 0.8rem;
-		left: 1rem;
+		left: 1.8rem;
 		white-space: pre-line;
 		text-align: left;
 		line-height: 1.1;
@@ -341,6 +347,17 @@
 		font-family: 'DSEG7';
 		font-size: clamp(1rem, 8vw, 1.3rem);
 	}
+
+	.forecast-date {
+		position: absolute;
+		top: 0.8rem;
+		left: 1.8rem;
+		white-space: pre-line;
+		text-align: left;
+		line-height: 1.1;
+		width: 200px;
+		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+	}
 	
 	.day {
 		font-size: clamp(1rem, 8vw, 1.5rem);		
@@ -348,7 +365,7 @@
 
 	.weather {
 		position: absolute;
-		right: 1rem;
+		right: 1.5rem;
 		bottom: 0.5em;
 		display: flex;
 		gap: 10px;
@@ -423,7 +440,7 @@
 
 	.aqi {
 		bottom: 0.5em;
-		left: 1em;
+		left: 1.5em;
 		position: absolute;
 		display: flex;
 		flex-direction: row;
@@ -496,8 +513,10 @@
 	.forecast-icon-ghost {
 		position: absolute;
 		inset: 0;
-		opacity: 0.3;
+		opacity: 0.2;
 		pointer-events: none;
+		color: black;
+    z-index: -1;
 	}
 
 	.forecast-hi {
