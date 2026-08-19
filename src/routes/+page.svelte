@@ -116,7 +116,7 @@
 	});
 
 	const pad = (n) => String(n).padStart(2, '0');
-	const hours = $derived(pad(now.getHours()));
+	const hours = $derived(pad(now.getHours() % 12 || 12));
 	const minutes = $derived(pad(now.getMinutes()));
 	const dateStr = $derived(
 		now.toLocaleDateString(undefined, { weekday: 'long' }) +
@@ -221,7 +221,7 @@
 
 			{#if data.weather}
 				<div class="weather">
-					<span class="weather-icon">{weatherGlyph}</span>
+					<span class="weather-icon"><span class="weather-icon-ghost">0</span>{weatherGlyph}</span>
 					<div class="weather-info">
 						<div class="temp-group">
 							<span class="temp">{Math.round(data.weather.temp_c)}<span class="unit"><sup>&deg;C</sup></span></span>
@@ -236,7 +236,9 @@
 		{#if data.aqi}
 			<div class="aqi">
 				<span class="aqi-value-wrapper">
-					<span class="aqi-value">{data.aqi.value}</span>
+					<span class="aqi-value">{data.aqi.value}
+						<span class="status-ghost">0</span>
+					</span>
 					<span class="aqi-risk seven-seg">{data.aqi.risk}</span>
 				</span>
 				<span class="aqi-msg  seven-seg">{data.aqi.message}</span>
@@ -245,7 +247,7 @@
 
 		{#if lastUpdated}
 			<div class="status">
-				<span class="seven-seg">Last Update</span><br />{lastUpdated.toLocaleTimeString()}
+				<span class="seven-seg status-title">Last Update<br /><span class="status-time">{lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></span>
 			</div>
 		{/if}
 	</main>
@@ -353,9 +355,21 @@
 	}
 
 	.weather-icon {
+		position: relative;
 		font-family: 'DSEGWeather';
 		gap: 5px;
+		z-index: 1;
+		opacity: 1;
 		font-size: clamp(1rem, 14vw, 5rem);
+	}
+
+	.weather-icon-ghost {
+		position: absolute;
+		inset: 0;
+		opacity: 0.3;
+		z-index: -1;
+		color: black;
+		pointer-events: none;
 	}
 
 	.weather-info {
@@ -419,6 +433,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
+		position: relative;
 	}
 	.aqi-value {
 		font-family: 'DSEG7';
@@ -500,5 +515,19 @@
 		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 		line-height: 1.2;
 		text-align: right;
+	}
+
+	.status-ghost {
+		position: absolute;
+		left: 2px;
+		opacity: 0.15;
+		pointer-events: none;
+		color: #000;
+		z-index: -1;
+	}	
+
+	.status-title {}
+	.status-time {
+		font-size: 1.6rem;
 	}
 </style>
