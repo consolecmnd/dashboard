@@ -28,10 +28,10 @@
 		function tick() {
 			if (cancelled) return;
 			const elapsed = Date.now() - cycleStart;
-			if (!showForecast && elapsed >= 720_000) {
+			if (!showForecast && elapsed >= 300_000) {
 				showForecast = true;
 				cycleStart = Date.now();
-			} else if (showForecast && elapsed >= 180_000) {
+			} else if (showForecast && elapsed >= 120_000) {
 				showForecast = false;
 				cycleStart = Date.now();
 			}
