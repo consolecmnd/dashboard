@@ -118,12 +118,9 @@
 	const pad = (n) => String(n).padStart(2, '0');
 	const hours = $derived(pad(now.getHours() % 12 || 12));
 	const minutes = $derived(pad(now.getMinutes()));
-	const dateStr = $derived(
-		now.toLocaleDateString(undefined, { weekday: 'long' }) +
-			',\n' +
+	const dayStr = $derived(now.toLocaleDateString(undefined, { weekday: 'long' }));
+	const dateStr = $derived(now.toLocaleDateString(undefined, { day: 'numeric', month: 'long' })
 		// now.toLocaleDateString(undefined, { weekday: 'long' } +  { month: 'long', day: 'numeric', year: 'numeric' })
-		now.toLocaleDateString({ day: 'numeric', month: 'long', year: 'numeric'  })
-		// now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })
 	);
 
 	// WeatherAPI condition code -> DSEGWeather glyph (1=sun, 2=cloud, 3=rain,
@@ -216,7 +213,10 @@
 				<span class="time-ghost">00:00</span>
 				{hours}<span class="colon" class:off={blink}>:</span>{minutes}
 			</div>
-				<span class="date">{dateStr}</span>
+				<span class="dateWrapper">
+					<span class="day seven-seg">{dayStr}</span>
+					<span class="date">{dateStr}</span>
+				</span>
 			</div>
 
 			{#if data.weather}
@@ -298,7 +298,7 @@
 	.time {
 		position: relative;
 		font-family: 'DSEG7';
-		font-size: min(28vw, 50vh);
+		font-size: min(27vw, 50vh);
 		line-height: 1;
 		letter-spacing: 0.03em;
 		color: #fff;
@@ -321,26 +321,35 @@
 	}
 
 	.colon.off {
-		opacity: 0.8;
+		opacity: 0.15;
+		color: black;
 		/* opacity: 1; */
+	}
+
+	.dateWrapper {
+		position: absolute;
+		top: 0.8rem;
+		left: 1rem;
+		white-space: pre-line;
+		text-align: left;
+		line-height: 1.1;
+		width: 200px;
+		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 	}
 
 	.date {
 		font-family: 'DSEG7';
-		font-size: clamp(1rem, 8vw, 1.5rem);
-		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-		position: absolute;
-		top: 10px;
-		left: 10px;
-		white-space: pre-line;
-		text-align: left;
-		line-height: 1.5;
+		font-size: clamp(1rem, 8vw, 1.3rem);
+	}
+	
+	.day {
+		font-size: clamp(1rem, 8vw, 1.5rem);		
 	}
 
 	.weather {
 		position: absolute;
 		right: 1rem;
-		bottom: 1rem;
+		bottom: 0.5em;
 		display: flex;
 		gap: 10px;
 		padding: 1px 5px;
@@ -349,8 +358,8 @@
 		backdrop-filter: blur(4px);
     align-items: center;
 		flex-direction: row;
-		height: 100px;
-    width: 40vw;
+		height: 90px;
+    width: 39vw;
     justify-content: center;
 	}
 
@@ -360,7 +369,7 @@
 		gap: 5px;
 		z-index: 1;
 		opacity: 1;
-		font-size: clamp(1rem, 14vw, 5rem);
+		font-size: clamp(1rem, 16vw, 5rem);
 	}
 
 	.weather-icon-ghost {
@@ -412,7 +421,7 @@
 	}
 
 	.aqi {
-		bottom: 1em;
+		bottom: 0.5em;
 		left: 1em;
 		position: absolute;
 		display: flex;
@@ -422,22 +431,23 @@
 		background: rgba(0, 0, 0, 0.55);
 		border-radius: 0.5rem;
 		backdrop-filter: blur(4px);
-		max-width: 45vw;
+		max-width: 35vw;
 		width: 100%;
 		align-items: center;
 		text-align: center;
-		height: 100px;
+		height: 90px;
 	}
 
 	.aqi-value-wrapper {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: 10px;
 		position: relative;
+		width: 100px;
 	}
 	.aqi-value {
 		font-family: 'DSEG7';
-		font-size: 3.5rem;
+		font-size: 2rem;
 	}
 	
 	.aqi-risk {
@@ -447,7 +457,7 @@
 	}
 
 	.aqi-msg {
-		font-size: 0.75rem;
+		font-size: 0.85rem;
 		line-height: 1.3;
 	}
 
@@ -509,8 +519,8 @@
 	.status {
 		font-family: 'DSEG7';
 		position: absolute;
-		top: 1rem;
-		right: 1rem;
+		top: 0.9rem;
+		right: 2rem;
 		font-size: clamp(1rem, 7vw, 1rem);
 		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
 		line-height: 1.2;
@@ -519,8 +529,8 @@
 
 	.status-ghost {
 		position: absolute;
-		left: 2px;
-		opacity: 0.15;
+		left: 5px;
+		opacity: 0.3;
 		pointer-events: none;
 		color: #000;
 		z-index: -1;
