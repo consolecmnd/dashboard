@@ -191,12 +191,12 @@
 <div class="dashboard">
 	<video class="bg" src={VIDEOS[videoIdx]} autoplay muted loop playsinline></video>
 
-	<main ondblclick={toggleForecast}>
+	<main>
 		{#if showForecast && data.weather?.forecast}
-			<div class="forecast">
+			<div class="forecast" onclick={toggleForecast} role="button" tabindex="-1">
 			{#each data.weather.forecast as day, i (day.date)}
 				<div class="forecast-day">
-					<span class="forecast-label">{i === 0 ? 'Today' : DAY_NAMES[new Date(day.date + 'T12:00:00').getDay()]}</span>
+					<span class="forecast-label seven-seg">{i === 0 ? 'Today' : DAY_NAMES[new Date(day.date + 'T12:00:00').getDay()]}</span>
 						<span class="forecast-icon">{forecastGlyph(day.code)}</span>
 						<span class="forecast-hi">{Math.round(day.max_c)}&deg;</span>
 						<span class="forecast-lo">{Math.round(day.min_c)}&deg;</span>
@@ -204,7 +204,7 @@
 				{/each}
 			</div>
 
-			<div class="clock-mini">
+			<div class="clock-mini" onclick={toggleForecast} role="button" tabindex="-1">
 				<span class="time-mini">{hours}<span class="colon" class:off={blink}>:</span>{minutes}</span>
 			</div>
 		{:else}
@@ -221,7 +221,7 @@
 
 			{#if data.weather}
 				<div class="weather">
-					<span class="weather-icon"><span class="weather-icon-ghost">0</span>{weatherGlyph}</span>
+					<span class="weather-icon" onclick={toggleForecast} role="button" tabindex="-1"><span class="weather-icon-ghost">0</span>{weatherGlyph}</span>
 					<div class="weather-info">
 						<div class="temp-group">
 							<span class="temp">{Math.round(data.weather.temp_c)}<span class="unit"><sup>&deg;C</sup></span></span>
@@ -370,6 +370,7 @@
 		z-index: 1;
 		opacity: 1;
 		font-size: clamp(1rem, 16vw, 5rem);
+		cursor: pointer;
 	}
 
 	.weather-icon-ghost {
@@ -466,10 +467,11 @@
 		gap: 1.5rem;
 		justify-content: center;
 		align-items: center;
-		padding: 1rem;
+		padding: 0.7rem;
 		background: rgba(0, 0, 0, 0.55);
 		border-radius: 0.75rem;
 		backdrop-filter: blur(4px);
+		margin-top: -30px;
 	}
 
 	.forecast-day {
@@ -481,13 +483,13 @@
 	}
 
 	.forecast-label {
-		font-size: 0.8rem;
+		font-size: 1rem;
 		text-transform: uppercase;
 	}
 
 	.forecast-icon {
 		font-family: 'DSEGWeather';
-		font-size: clamp(1.5rem, 4vw, 3rem);
+		font-size: clamp(4rem, 4vw, 3rem);
 	}
 
 	.forecast-hi {
@@ -504,7 +506,7 @@
 		position: absolute;
 		right: 2rem;
 		bottom: 2rem;
-		padding: 0.5rem 1rem;
+		padding: 0.5rem 6px 5px;
 		background: rgba(0, 0, 0, 0.55);
 		border-radius: 0.5rem;
 		backdrop-filter: blur(4px);
@@ -512,7 +514,7 @@
 
 	.time-mini {
 		font-family: 'DSEG7';
-		font-size: clamp(1.2rem, 4vw, 2.5rem);
+		font-size: clamp(1.2rem, 7vw, 2.5rem);
 		line-height: 1;
 	}
 
@@ -529,7 +531,7 @@
 
 	.status-ghost {
 		position: absolute;
-		left: 5px;
+		left: 14px;
 		opacity: 0.3;
 		pointer-events: none;
 		color: #000;
