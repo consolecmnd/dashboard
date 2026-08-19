@@ -197,7 +197,7 @@
 			{#each data.weather.forecast as day, i (day.date)}
 				<div class="forecast-day">
 					<span class="forecast-label seven-seg">{i === 0 ? 'Today' : DAY_NAMES[new Date(day.date + 'T12:00:00').getDay()]}</span>
-						<span class="forecast-icon">{forecastGlyph(day.code)}</span>
+						<span class="forecast-icon"><span class="forecast-icon-ghost">0</span>{forecastGlyph(day.code)}</span>
 						<span class="forecast-hi">{Math.round(day.max_c)}&deg;</span>
 						<span class="forecast-lo">{Math.round(day.min_c)}&deg;</span>
 					</div>
@@ -488,8 +488,16 @@
 	}
 
 	.forecast-icon {
+		position: relative;
 		font-family: 'DSEGWeather';
 		font-size: clamp(4rem, 4vw, 3rem);
+	}
+
+	.forecast-icon-ghost {
+		position: absolute;
+		inset: 0;
+		opacity: 0.3;
+		pointer-events: none;
 	}
 
 	.forecast-hi {

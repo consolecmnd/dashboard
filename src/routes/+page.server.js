@@ -40,7 +40,7 @@ async function fetchWeather() {
 
 	try {
 		const res = await fetch(
-			`https://api.weatherapi.com/v1/forecast.json?key=${encodeURIComponent(apiKey)}&q=${encodeURIComponent(q)}&days=1`
+			`https://api.weatherapi.com/v1/forecast.json?key=${encodeURIComponent(apiKey)}&q=${encodeURIComponent(q)}&days=7`
 		);
 
 		if (!res.ok) return null;
