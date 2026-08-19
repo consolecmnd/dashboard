@@ -119,9 +119,11 @@
 	const hours = $derived(pad(now.getHours()));
 	const minutes = $derived(pad(now.getMinutes()));
 	const dateStr = $derived(
-		now.toLocaleDateString(undefined, { weekday: 'short' }) +
-			'\n' +
-			now.toLocaleDateString(undefined, { month: 'long', day: 'numeric' })
+		now.toLocaleDateString(undefined, { weekday: 'long' }) +
+			',\n' +
+		// now.toLocaleDateString(undefined, { weekday: 'long' } +  { month: 'long', day: 'numeric', year: 'numeric' })
+		now.toLocaleDateString({ day: 'numeric', month: 'long', year: 'numeric'  })
+		// now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })
 	);
 
 	// WeatherAPI condition code -> DSEGWeather glyph (1=sun, 2=cloud, 3=rain,
@@ -233,15 +235,17 @@
 
 		{#if data.aqi}
 			<div class="aqi">
-				<span class="aqi-value">{data.aqi.value}</span>
-				<span class="aqi-risk">{data.aqi.risk}</span>
+				<span class="aqi-value-wrapper">
+					<span class="aqi-value">{data.aqi.value}</span>
+					<span class="aqi-risk">{data.aqi.risk}</span>
+				</span>
 				<span class="aqi-msg">{data.aqi.message}</span>
 			</div>
 		{/if}
 
 		{#if lastUpdated}
 			<div class="status">
-				Updated every 10<br />{lastUpdated.toLocaleTimeString()}
+				<span class="seven-seg">Last Update</span><br />{lastUpdated.toLocaleTimeString()}
 			</div>
 		{/if}
 	</main>
@@ -266,6 +270,9 @@
 		pointer-events: none;
 	}
 
+	.seven-seg {
+		/* font-family: ; */
+	}
 	main {
 		position: relative;
 		z-index: 1;
@@ -394,26 +401,30 @@
 		position: absolute;
 		display: flex;
 		flex-direction: row;
-		gap: 5px;
-		padding: 0 2px;
-		padding-right: 5px;
+		gap: 4px;
+		padding: 1px 10px;
 		background: rgba(0, 0, 0, 0.55);
 		border-radius: 0.5rem;
 		backdrop-filter: blur(4px);
-		max-width: 50vw;
+		max-width: 45vw;
 		width: 100%;
 		align-items: center;
 		text-align: center;
 		height: 100px;
 	}
 
+	.aqi-value-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
 	.aqi-value {
 		font-family: 'DSEG7';
 		font-size: 3.5rem;
-		line-height: 1;
 	}
-
+	
 	.aqi-risk {
+		font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif ;
 		font-size: 0.85rem;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
