@@ -16,6 +16,11 @@
 	src: url('$lib/fonts/DSEGWeather.ttf') format('truetype');
 }
 
+@font-face {
+	font-family: 'Seven Segment';
+	src: url('$lib/fonts/Seven Segment.ttf') format('truetype');
+}
+
 body {
 	margin: 0;
 	min-height: 100vh;

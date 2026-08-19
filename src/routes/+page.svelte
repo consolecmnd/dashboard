@@ -224,10 +224,10 @@
 					<span class="weather-icon">{weatherGlyph}</span>
 					<div class="weather-info">
 						<div class="temp-group">
-							<span class="temp">{Math.round(data.weather.temp_c)}<span class="unit">&deg;C</span></span>
-							<span class="hi-lo">H:{Math.round(data.weather.max_c)}&deg; L:{Math.round(data.weather.min_c)}&deg;</span>
+							<span class="temp">{Math.round(data.weather.temp_c)}<span class="unit"><sup>&deg;C</sup></span></span>
+							<span class="hi-lo">H: {Math.round(data.weather.max_c)}&deg;<br />L: {Math.round(data.weather.min_c)}&deg;</span>
 						</div>
-						<span class="cond">{data.weather.text}</span>
+						<span class="cond seven-seg">{data.weather.text}</span>
 					</div>
 				</div>
 			{/if}
@@ -237,9 +237,9 @@
 			<div class="aqi">
 				<span class="aqi-value-wrapper">
 					<span class="aqi-value">{data.aqi.value}</span>
-					<span class="aqi-risk">{data.aqi.risk}</span>
+					<span class="aqi-risk seven-seg">{data.aqi.risk}</span>
 				</span>
-				<span class="aqi-msg">{data.aqi.message}</span>
+				<span class="aqi-msg  seven-seg">{data.aqi.message}</span>
 			</div>
 		{/if}
 
@@ -271,8 +271,9 @@
 	}
 
 	.seven-seg {
-		/* font-family: ; */
+		font-family: 'Seven Segment';
 	}
+
 	main {
 		position: relative;
 		z-index: 1;
@@ -314,6 +315,7 @@
 
 	.colon {
 		/* transition: opacity 0.1s; */
+		
 	}
 
 	.colon.off {
@@ -338,7 +340,7 @@
 		right: 1rem;
 		bottom: 1rem;
 		display: flex;
-		gap: 0;
+		gap: 10px;
 		padding: 1px 5px;
 		background: rgba(0, 0, 0, 0.55);
 		border-radius: 0.5rem;
@@ -372,6 +374,7 @@
 	.temp-group {
 		display: flex;
     align-content: center;
+		gap: 5px;
     height: 40px;
     align-items: center;
 	}
@@ -383,8 +386,7 @@
 	}
 
 	.cond {
-		font-size: 0.9rem;
-		opacity: 0.85;
+		font-size: 1rem;
 		text-align: center;
 	}
 
@@ -424,7 +426,6 @@
 	}
 	
 	.aqi-risk {
-		font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif ;
 		font-size: 0.85rem;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
@@ -456,7 +457,6 @@
 
 	.forecast-label {
 		font-size: 0.8rem;
-		opacity: 0.8;
 		text-transform: uppercase;
 	}
 
@@ -473,7 +473,6 @@
 	.forecast-lo {
 		font-family: 'DSEG7';
 		font-size: clamp(0.8rem, 1.5vw, 1.1rem);
-		opacity: 0.5;
 	}
 
 	.clock-mini {
@@ -497,10 +496,9 @@
 		position: absolute;
 		top: 1rem;
 		right: 1rem;
-		font-size: 0.7rem;
-		opacity: 0.8;
+		font-size: clamp(1rem, 7vw, 1rem);
 		text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-		line-height: 1.8;
-		text-align: center;
+		line-height: 1.2;
+		text-align: right;
 	}
 </style>
