@@ -335,7 +335,7 @@
 	.dateWrapper {
 		position: absolute;
 		top: 0.8rem;
-		left: 1.8rem;
+		left: 2rem;
 		white-space: pre-line;
 		text-align: left;
 		line-height: 1.1;
@@ -351,7 +351,7 @@
 	.forecast-date {
 		position: absolute;
 		top: 0.8rem;
-		left: 1.8rem;
+		left: 2rem;
 		white-space: pre-line;
 		text-align: left;
 		line-height: 1.1;
@@ -370,13 +370,13 @@
 		display: flex;
 		gap: 10px;
 		padding: 1px 5px;
-		background: rgba(0, 0, 0, 0.55);
+		background: rgba(0, 0, 0, 0.35);
 		border-radius: 0.5rem;
 		backdrop-filter: blur(4px);
     align-items: center;
 		flex-direction: row;
 		height: 90px;
-    width: 39vw;
+    width: 30vw;
     justify-content: center;
 	}
 
@@ -440,16 +440,16 @@
 
 	.aqi {
 		bottom: 0.5em;
-		left: 1.5em;
+		left: 2em;
 		position: absolute;
 		display: flex;
 		flex-direction: row;
 		gap: 4px;
 		padding: 1px 10px;
-		background: rgba(0, 0, 0, 0.55);
+		background: rgba(0, 0, 0, 0.35);
 		border-radius: 0.5rem;
 		backdrop-filter: blur(4px);
-		max-width: 35vw;
+		max-width: 28vw;
 		width: 100%;
 		align-items: center;
 		text-align: center;
@@ -485,7 +485,7 @@
 		justify-content: center;
 		align-items: center;
 		padding: 0.7rem;
-		background: rgba(0, 0, 0, 0.55);
+		background: rgba(0, 0, 0, 0.35);
 		border-radius: 0.75rem;
 		backdrop-filter: blur(4px);
 		margin-top: -30px;
@@ -507,7 +507,7 @@
 	.forecast-icon {
 		position: relative;
 		font-family: 'DSEGWeather';
-		font-size: clamp(4rem, 4vw, 3rem);
+		font-size: clamp(6rem, 4vw, 3rem);
 	}
 
 	.forecast-icon-ghost {
@@ -521,12 +521,12 @@
 
 	.forecast-hi {
 		font-family: 'DSEG7';
-		font-size: clamp(0.9rem, 2vw, 1.4rem);
+		font-size: clamp(0.9rem, 3vw, 1.4rem);
 	}
 
 	.forecast-lo {
 		font-family: 'DSEG7';
-		font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+		font-size: clamp(1.2rem, 1.5vw, 1.1rem);
 	}
 
 	.clock-mini {
@@ -534,7 +534,7 @@
 		right: 2rem;
 		bottom: 2rem;
 		padding: 0.5rem 6px 5px;
-		background: rgba(0, 0, 0, 0.55);
+		background: rgba(0, 0, 0, 0.35);
 		border-radius: 0.5rem;
 		backdrop-filter: blur(4px);
 	}
@@ -558,7 +558,7 @@
 
 	.status-ghost {
 		position: absolute;
-		left: 14px;
+		left: 18px;
 		opacity: 0.3;
 		pointer-events: none;
 		color: #000;
